@@ -1,0 +1,17 @@
+.DS_Store
+Makefile
+cb_2017_us_cbsa_20m.zip
+cb_2017_us_cbsa_20m/
+cb_2017_us_cbsa_500k.zip
+cb_2017_us_cbsa_500k/
+cb_2017_us_state_20m.zip
+cb_2017_us_state_20m/
+counties-albers.ndjson
+data.geojson
+data.ndjson
+data.svg
+merged-geo.geojson
+merged-geo.qgs
+node_modules/
+states-albers.ndjson
+states.geojson

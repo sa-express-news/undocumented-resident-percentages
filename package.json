@@ -1,0 +1,16 @@
+{
+  "name": "undocumented-levels-graphic",
+  "version": "1.0.0",
+  "description": "",
+  "main": "buildmap.sh",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Luke whyte",
+  "license": "MIT",
+  "devDependencies": {
+    "@turf/turf": "^5.1.6",
+    "csv-parse": "^3.1.2",
+    "d3": "^5.7.0"
+  }
+}
