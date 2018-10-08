@@ -4,15 +4,8 @@ const turf      = require('@turf/turf');
 const parseCSV  = require('csv-parse/lib/sync');
 const d3        = require('d3');
 
-const states        = JSON.parse(fs.readFileSync('./states.geojson', 'utf8'));
 const metro         = JSON.parse(fs.readFileSync('./metroareas.geojson', 'utf8'));
 const undocumented  = parseCSV(fs.readFileSync('./metro-area-percent-undocumented.csv', 'utf8'), { columns: true });
-
-const res = {
-    "type": "FeatureCollection",
-    "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::4269" } },
-    "features": [],
-};
 
 const undocumentedHash = undocumented.reduce((res, hash) => {
     res[hash.Area] = hash;
@@ -24,7 +17,7 @@ const getRadiusDomain = undocumented => {
     return [parseFloat(nums[0], 10), parseFloat(nums[nums.length - 1], 10)];
 };
 
-const radiusScale = d3.scaleLinear().domain(getRadiusDomain(undocumented.slice())).range([4.5,25]);
+const radiusScale = d3.scalePow().exponent(2).domain(getRadiusDomain(undocumented.slice())).range([2,30]);
 
 const getPoint = feature => turf.center(feature);
 
@@ -33,6 +26,7 @@ const getProperties = (feature, percentUndocumented) => ({
     name: feature.properties.NAME,
     pointRadius: radiusScale(parseFloat(percentUndocumented, 10)),
     stroke: '#e34a33',
+    strokeWidth: 1.5,
     fill: '#b30000',
     fillOpacity: 0.5,
 });
@@ -55,21 +49,16 @@ const getPoints = (resFeatures, feature) => {
     return resFeatures;
 };
 
-const parseStates = features => features.map(({ type, properties, geometry }) => ({
-    type,
-    geometry,
-    properties: {
-        name: properties.NAME,
-        stateFP: properties.STATEFP,
-    }
-})).filter(({ geometry }) => geometry);
+const res = {
+    "type": "FeatureCollection",
+    "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::4269" } },
+    "features": metro.features.reduce(getPoints, []),
+};
 
-res.features = metro.features.reduce(getPoints, []).concat(parseStates(states.features));
-
-fs.writeFile('./data.geojson', JSON.stringify(res), function(err) {
+fs.writeFile('./circles.geojson', JSON.stringify(res), function(err) {
     if(err) {
         return console.log(err);
     }
 
-    return console.log("data.geojson was created");
+    return console.log("circles.geojson was created");
 }); 
