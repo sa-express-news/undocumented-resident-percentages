@@ -19,10 +19,10 @@ const res = {
     "features": circles.features.slice().concat(parseStates(states.features)),
 };
 
-fs.writeFile('./data.geojson', JSON.stringify(res), function(err) {
+fs.writeFile('./topo.geojson', JSON.stringify(res), function(err) {
     if(err) {
         return console.log(err);
     }
 
-    return console.log("data.geojson was created");
+    return console.log("topo.geojson was created");
 }); 

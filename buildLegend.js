@@ -19,8 +19,8 @@ const radiusScale = d3.scalePow().exponent(2).domain(domain).range([2,30]);
 
 const { width, height } = require('minimist')(process.argv.slice(2), { // parse the -w and -h flags using minimist
     default: {
-        w: 960,
-        h: 500
+        w: 200,
+        h: 200
     },
     alias: {
         w: 'width',
@@ -30,7 +30,7 @@ const { width, height } = require('minimist')(process.argv.slice(2), { // parse 
 
 const svg = d3n.createSVG(width, height).append('g')
                             .attr('class', 'legend')
-                            .attr('transform', `translate(20, ${height - 110})`);
+                            .attr('transform', `translate(1, 17)`);
 
 const groupXPointer = {
     val: 0,
@@ -62,7 +62,10 @@ groups.append('circle')
 groups.append('text')
         .attr('transform', 'translate(0, 50)')
         .style('text-anchor', 'middle')
-        .text(function (d) { return d });
+        .style('color', '#282828')
+        .style('font-family', '"Helvetica Neue",Helvetica,Arial,sans-serif')
+        .style('font-size', '0.8em')
+        .text(function (d) { return `${d}%` });
 
 fs.writeFile('./legend.svg', d3n.svgString(), function(err) {
     if(err) {

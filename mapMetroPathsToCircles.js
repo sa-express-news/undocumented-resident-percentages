@@ -21,9 +21,12 @@ const radiusScale = d3.scalePow().exponent(2).domain(getRadiusDomain(undocumente
 
 const getPoint = feature => turf.center(feature);
 
+const getID = name => {
+    return `metro-${name.replace(/[\.\,]/, '').replace(/\s/, '-').toLowerCase()}`;
+};
+
 const getProperties = (feature, percentUndocumented) => ({
-    percentUndocumented: parseFloat(percentUndocumented, 10),
-    name: feature.properties.NAME,
+    title: `${feature.properties.NAME}: ${parseFloat(percentUndocumented, 10)}% undocumented`,
     pointRadius: radiusScale(parseFloat(percentUndocumented, 10)),
     stroke: '#e34a33',
     strokeWidth: 1.5,
@@ -44,6 +47,7 @@ const getPoints = (resFeatures, feature) => {
     if (percentUndocumented) {
         const point = getPoint(feature);
         point.properties = getProperties(feature, percentUndocumented);
+        point.id = getID(feature.properties.NAME);
         resFeatures.push(point);
     }
     return resFeatures;
