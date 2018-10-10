@@ -28,46 +28,47 @@ const { width, height } = require('minimist')(process.argv.slice(2), { // parse 
     }
 });
 
-const svg = d3n.createSVG(width, height).append('g')
-                            .attr('class', 'legend')
-                            .attr('transform', `translate(1, 17)`);
+const svg = d3n.createSVG(width, height);
 
-const groupXPointer = {
-    val: 0,
-    getCurr: function () {
-        return this.val + 15;
-    },
-    increment: function (d) {
-        this.val += 30 + (radiusScale(d) * 2);
-    }
-};
+const legend = svg.append("g")
+    .attr("class", "legend")
+    .attr("transform", "translate(" + (width - 65) + "," + (height - 20) + ")")
+  .selectAll("g")
+    .data(d3.ticks(domain[0], domain[1], 3))
+  .enter().append("g");
 
-const groups = svg.selectAll('g')
-    .data(d3.ticks(domain[0], domain[1], 5))
-    .enter()
-    .append('g')
-        .attr('transform', function(d, i) {
-            const x = groupXPointer.getCurr();
-            groupXPointer.increment(d);
-            return `translate(${x}, 15)`;
-        });
+legend.append("circle")
+    .attr("cy", function(d) { return -radiusScale(d); })
+    .attr("r", radiusScale)
+    .style('fill', 'none')
+    .style('stroke', '#e34a33')
+    .style('stroke-opacity', 0.8);
 
-groups.append('circle')
-        .attr('r', function (d) { return radiusScale(d); })
-        .style('stroke', '#e34a33')
-        .style('stroke-width', 1.5)
-        .style('fill', '#b30000')
-        .style('fill-opacity', 0.5);
+legend.append('line')
+    .attr('x2', function () { return radiusScale(domain[1]) + 4; })
+    .attr('y1', function(d) { return -2 * radiusScale(d); })
+    .attr('y2', function(d) { return -2 * radiusScale(d); })
+    .style('stroke', '#b30000')
+    .style('stroke-opacity', 0.5)
+    .style('stroke-dasharray', 2);
 
-groups.append('text')
-        .attr('transform', 'translate(0, 50)')
-        .style('text-anchor', 'middle')
-        .style('color', '#282828')
-        .style('font-family', '"Helvetica Neue",Helvetica,Arial,sans-serif')
-        .style('font-size', '0.8em')
-        .text(function (d) { return `${d}%` });
+legend.append("text")
+    .attr("y", function(d) { return -2 * radiusScale(d); })
+    .attr('x', function () { return radiusScale(domain[1]) + 8; })
+    .style('stroke', '#777')
+    .style('stroke-width', 0.8)
+    .style('fill', '#777')
+    .style('font-family', 'sans-serif')
+    .style('font-size', '12px')
+    .style('text-anchor', 'center')
+    .text(function (d) { return `${d}%` });
 
-fs.writeFile('./legend.svg', d3n.svgString(), function(err) {
+const removeOpeningTag = svgStr => { // used to merge topo.svg with legend.svg
+    const tagEnd = `height="${height}">`;
+    return svgStr.slice(svgStr.indexOf(tagEnd) + tagEnd.length);
+}
+
+fs.writeFile('./legend.svg', removeOpeningTag(d3n.svgString()), function(err) {
     if(err) {
         return console.log(err);
     }

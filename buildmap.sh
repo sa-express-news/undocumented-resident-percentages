@@ -43,10 +43,14 @@ geoproject "${PROJECTION}.fitSize([${WIDTH}, ${HEIGHT}], d)" < topo.geojson | # 
 
 ndjson-split 'd.features' | # convert to ndjson
 
-geo2svg --newline-delimited -w ${WIDTH} -h ${HEIGHT} > topo.svg # convert ndjson to svg and output
+geo2svg --newline-delimited -w ${WIDTH} -h ${HEIGHT} | # convert ndjson to svg
 
-node buildLegend.js -w 200 -h 100 # Build and output legend.svg, minus first line so it can be merged with topo.svg
+sed '$d' > topo.svg # remove last line for splice with legend and output
+
+node buildLegend.js -w ${WIDTH} -h ${HEIGHT} # Build and output legend.svg, minus first line so it can be merged with topo.svg
+
+tail -n +1 < legend.svg >> topo.svg
 
 # clean up dir
 find . -name "*.zip" -exec rm -f {} \;
-rm states.geojson metroareas.geojson circles.geojson topo.geojson
+rm states.geojson metroareas.geojson circles.geojson topo.geojson legend.svg
