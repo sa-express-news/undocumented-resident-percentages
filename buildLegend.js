@@ -32,9 +32,9 @@ const svg = d3n.createSVG(width, height);
 
 const legend = svg.append("g")
     .attr("class", "legend")
-    .attr("transform", "translate(" + (width - 65) + "," + (height - 20) + ")")
+    .attr("transform", "translate(" + (width - 75) + "," + (height - 20) + ")")
   .selectAll("g")
-    .data(d3.ticks(domain[0], domain[1], 3))
+    .data([5, 8, 10])
   .enter().append("g");
 
 legend.append("circle")
@@ -56,12 +56,12 @@ legend.append("text")
     .attr("y", function(d) { return -2 * radiusScale(d); })
     .attr('x', function () { return radiusScale(domain[1]) + 8; })
     .style('stroke', '#777')
-    .style('stroke-width', 0.8)
+    .style('stroke-width', 0.6)
     .style('fill', '#777')
     .style('font-family', 'sans-serif')
-    .style('font-size', '12px')
+    .style('font-size', '18px')
     .style('text-anchor', 'center')
-    .text(function (d) { return `${d}%` });
+    .text(function (d) { return `${d}%`; });
 
 const removeOpeningTag = svgStr => { // used to merge topo.svg with legend.svg
     const tagEnd = `height="${height}">`;
